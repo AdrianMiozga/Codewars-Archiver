@@ -98,6 +98,8 @@ def main():
             # Make sure the title is a valid directory name
             clean_title = re.sub(r"[^-\w ]", "", title)
 
+            clean_title = re.sub(r"\s+", " ", clean_title)
+
             kata_path = os.path.join(output_directory, clean_title)
             Path(kata_path).mkdir()
 
