@@ -95,6 +95,7 @@ def main():
             title = kata.find("div", class_="item-title").a.string.strip()
             solution_count = len(kata.find_all("code"))
 
+            # Make sure the title is a valid directory name
             clean_title = re.sub(r"[^-\w ]", "", title)
 
             kata_path = os.path.join(output_directory, clean_title)
