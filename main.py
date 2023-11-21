@@ -1,6 +1,7 @@
 import json
 import os
 import re
+import sys
 from pathlib import Path
 
 import requests
@@ -8,8 +9,22 @@ from bs4 import BeautifulSoup
 
 
 def main():
-    with open("config.json", "r", encoding="utf-8") as file:
+    config_file = "config.json"
+
+    if not os.path.exists(config_file):
+        print(f"[Error] {config_file} not found!")
+        sys.exit(1)
+
+    with open(config_file, "r", encoding="utf-8") as file:
         config = json.load(file)
+
+    if config.get("username") is None:
+        print(f"[Error] Key 'username' not found in {config_file}")
+        sys.exit(1)
+
+    if config.get("_session_id") is None:
+        print(f"[Error] Key '_session_id' not found in {config_file}")
+        sys.exit(1)
 
     base_url = "https://www.codewars.com"
 
