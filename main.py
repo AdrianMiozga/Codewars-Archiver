@@ -33,7 +33,7 @@ def main():
         sys.exit(1)
 
     cookies = {
-        "_session_id": config["_session_id"],
+        "_session_id": config.get("_session_id"),
     }
 
     headers = {
@@ -53,7 +53,7 @@ def main():
             }
 
         response = requests.get(
-            f"https://www.codewars.com/users/{config['username']}/completed_solutions",
+            f"https://www.codewars.com/users/{config.get('username')}/completed_solutions",
             params=params,
             cookies=cookies,
             headers=headers,
