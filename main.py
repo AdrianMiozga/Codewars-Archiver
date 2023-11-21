@@ -74,7 +74,6 @@ def main():
         if soup.find_all("div", class_="list-item-solutions"):
             print(f"Page: {page}")
         else:
-            print("Last page reached")
             break
 
         for kata in soup.find_all("div", class_="list-item-solutions"):
