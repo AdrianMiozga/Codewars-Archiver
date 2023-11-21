@@ -1,4 +1,5 @@
 import os
+import re
 from pathlib import Path
 
 from bs4 import BeautifulSoup
@@ -12,12 +13,14 @@ soup = BeautifulSoup(html, "html.parser")
 
 for solution in soup.find_all("div", class_="list-item-solutions"):
     url = solution.find("div", class_="item-title").a.get("href")
-    title = solution.find("div", class_="item-title").a.string
+    title = solution.find("div", class_="item-title").a.string.strip()
     timestamp = solution.find("time-ago").get("datetime")
     language = solution.find("code").get("data-language")
     code = solution.find("code").string
 
-    directory = os.path.join("output", "repo", title)
+    stripped_title = re.sub(r'[\\/*?:"<>|]', "", title)
+
+    directory = os.path.join("output", "repo", stripped_title)
     Path(directory).mkdir(parents=True, exist_ok=True)
 
     with open(os.path.join(directory, "README.md"), "w", encoding="utf-8") as file:
