@@ -10,6 +10,8 @@ from bs4 import BeautifulSoup
 
 def main():
     config_file = "config.json"
+    output_directory = os.path.join("output", "repo")
+    base_url = "https://www.codewars.com"
 
     if not os.path.exists(config_file):
         print(f"[Error] {config_file} not found!")
@@ -26,7 +28,9 @@ def main():
         print(f"[Error] Key '_session_id' not found in {config_file}")
         sys.exit(1)
 
-    base_url = "https://www.codewars.com"
+    if os.path.exists(output_directory):
+        print(f"[Error] Output directory '{output_directory}' already exists")
+        sys.exit(1)
 
     cookies = {
         "_session_id": config["_session_id"],
@@ -73,16 +77,15 @@ def main():
 
             clean_filename = re.sub(r"[^-\w ]", "", title)
 
-            directory = os.path.join("output", "repo", clean_filename)
-            Path(directory).mkdir(parents=True, exist_ok=True)
+            path = os.path.join(output_directory, clean_filename)
 
-            with open(
-                os.path.join(directory, "README.md"), "w", encoding="utf-8"
-            ) as file:
+            Path(path).mkdir(parents=True)
+
+            with open(os.path.join(path, "README.md"), "w", encoding="utf-8") as file:
                 file.write(f"# [{title}]({base_url}{url})\n")
 
             with open(
-                os.path.join(directory, f"Solution.{language}"), "w", encoding="utf-8"
+                os.path.join(path, f"Solution.{language}"), "w", encoding="utf-8"
             ) as file:
                 file.write(f"{code}\n")
 
