@@ -47,6 +47,7 @@ def main():
 
     page = 0
     kata_downloaded = 0
+    solutions_downloaded = 0
 
     while True:
         if page == 0:
@@ -71,7 +72,7 @@ def main():
         soup = BeautifulSoup(response.text, "html.parser")
 
         if soup.find_all("div", class_="list-item-solutions"):
-            print("Page:", page)
+            print(f"Page: {page}")
         else:
             print("Last page reached")
             break
@@ -103,11 +104,15 @@ def main():
                 with open(os.path.join(path, filename), "w", encoding="utf-8") as file:
                     file.write(f"{code}\n")
 
+                solutions_downloaded += 1
+
             kata_downloaded += 1
 
         page += 1
 
-    print("Kata downloaded:", kata_downloaded)
+    print(
+        f"Downloaded {kata_downloaded} Kata and {solutions_downloaded} solutions in total"
+    )
 
 
 if __name__ == "__main__":
