@@ -1,6 +1,7 @@
 import json
 import os
 import re
+import subprocess
 import sys
 from pathlib import Path
 
@@ -45,9 +46,22 @@ def main():
         "x-requested-with": "XMLHttpRequest",
     }
 
+    Path(output_directory).mkdir()
+
+    subprocess.run(
+        [
+            "git",
+            "-C",
+            output_directory,
+            "init",
+        ],
+        check=True,
+    )
+
     page = 0
     kata_downloaded = 0
     solutions_downloaded = 0
+    commits_created = 0
 
     while True:
         if page == 0:
@@ -81,17 +95,44 @@ def main():
             title = kata.find("div", class_="item-title").a.string.strip()
             solution_count = len(kata.find_all("code"))
 
-            clean_filename = re.sub(r"[^-\w ]", "", title)
+            clean_title = re.sub(r"[^-\w ]", "", title)
 
-            path = os.path.join(output_directory, clean_filename)
+            kata_path = os.path.join(output_directory, clean_title)
+            Path(kata_path).mkdir()
 
-            Path(path).mkdir(parents=True)
+            readme_file = "README.md"
+            readme_path = os.path.join(kata_path, readme_file)
 
-            with open(os.path.join(path, "README.md"), "w", encoding="utf-8") as file:
+            with open(readme_path, "w", encoding="utf-8") as file:
                 file.write(f"# [{title}]({base_url}{url})\n")
 
+            subprocess.run(
+                [
+                    "git",
+                    "-C",
+                    output_directory,
+                    "add",
+                    os.path.join(clean_title, readme_file),
+                ],
+                check=True,
+            )
+
+            subprocess.run(
+                [
+                    "git",
+                    "-C",
+                    output_directory,
+                    "commit",
+                    "--message",
+                    f"Add {readme_file}",
+                ],
+                check=True,
+            )
+
+            commits_created += 1
+
             for i in range(solution_count):
-                # timestamp = kata.find_all("time-ago")[i].get("datetime")
+                timestamp = kata.find_all("time-ago")[i].get("datetime")
                 language = kata.find_all("code")[i].get("data-language")
                 code = kata.find_all("code")[i].string
 
@@ -100,9 +141,37 @@ def main():
                 else:
                     filename = f"Solution.{language}"
 
-                with open(os.path.join(path, filename), "w", encoding="utf-8") as file:
+                with open(
+                    os.path.join(kata_path, filename), "w", encoding="utf-8"
+                ) as file:
                     file.write(f"{code}\n")
 
+                subprocess.run(
+                    [
+                        "git",
+                        "-C",
+                        output_directory,
+                        "add",
+                        os.path.join(clean_title, filename),
+                    ],
+                    check=True,
+                )
+
+                subprocess.run(
+                    [
+                        "git",
+                        "-C",
+                        output_directory,
+                        "commit",
+                        "--date",
+                        timestamp,
+                        "--message",
+                        f"Add {filename}",
+                    ],
+                    check=True,
+                )
+
+                commits_created += 1
                 solutions_downloaded += 1
 
             kata_downloaded += 1
@@ -110,7 +179,9 @@ def main():
         page += 1
 
     print(
-        f"Downloaded {kata_downloaded} Kata and {solutions_downloaded} solutions in total"
+        f"Downloaded {kata_downloaded} Kata "
+        f"with {solutions_downloaded} solutions in total "
+        f"and created {commits_created} commits"
     )
 
 
