@@ -76,12 +76,10 @@ def main():
             print("Last page reached")
             break
 
-        for solution in soup.find_all("div", class_="list-item-solutions"):
-            url = solution.find("div", class_="item-title").a.get("href")
-            title = solution.find("div", class_="item-title").a.string.strip()
-            # timestamp = solution.find("time-ago").get("datetime")
-            language = solution.find("code").get("data-language")
-            code = solution.find("code").string
+        for kata in soup.find_all("div", class_="list-item-solutions"):
+            url = kata.find("div", class_="item-title").a.get("href")
+            title = kata.find("div", class_="item-title").a.string.strip()
+            solution_count = len(kata.find_all("code"))
 
             clean_filename = re.sub(r"[^-\w ]", "", title)
 
@@ -92,10 +90,18 @@ def main():
             with open(os.path.join(path, "README.md"), "w", encoding="utf-8") as file:
                 file.write(f"# [{title}]({base_url}{url})\n")
 
-            with open(
-                os.path.join(path, f"Solution.{language}"), "w", encoding="utf-8"
-            ) as file:
-                file.write(f"{code}\n")
+            for i in range(solution_count):
+                # timestamp = kata.find_all("time-ago")[i].get("datetime")
+                language = kata.find_all("code")[i].get("data-language")
+                code = kata.find_all("code")[i].string
+
+                if solution_count > 1:
+                    filename = f"Solution {i + 1}.{language}"
+                else:
+                    filename = f"Solution.{language}"
+
+                with open(os.path.join(path, filename), "w", encoding="utf-8") as file:
+                    file.write(f"{code}\n")
 
             kata_downloaded += 1
 
