@@ -36,8 +36,12 @@ def main():
         "_session_id": config.get("_session_id"),
     }
 
+    user_agent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) \
+                  AppleWebKit/537.36 (KHTML, like Gecko) \
+                  Chrome/119.0.0.0 Safari/537.36"
+
     headers = {
-        "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36",
+        "user-agent": re.sub(r"\s+", " ", user_agent),
         "x-requested-with": "XMLHttpRequest",
     }
 
