@@ -10,7 +10,7 @@ from bs4 import BeautifulSoup
 
 def main():
     config_file = "config.json"
-    output_directory = os.path.join("output", "repo")
+    output_directory = os.path.join("output")
     base_url = "https://www.codewars.com"
 
     if not os.path.exists(config_file):
