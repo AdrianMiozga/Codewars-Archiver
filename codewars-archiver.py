@@ -144,7 +144,7 @@ def main():
                         "--date",
                         timestamp,
                         "--message",
-                        f"Add {filename}",
+                        f"Add {filename}\n\nKata name: {title}",
                     ],
                     check=True,
                 )
