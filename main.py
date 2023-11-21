@@ -60,6 +60,10 @@ def main():
             timeout=10,
         )
 
+        if response.status_code != 200:
+            print(f"[Error] Status code: {response.status_code}")
+            sys.exit(1)
+
         soup = BeautifulSoup(response.text, "html.parser")
 
         if soup.find_all("div", class_="list-item-solutions"):
