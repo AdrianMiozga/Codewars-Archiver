@@ -12,6 +12,7 @@ from bs4 import BeautifulSoup
 def main():
     config_file = "config.json"
     output_directory = os.path.join("output")
+    readme_file = "README.md"
     base_url = "https://www.codewars.com"
 
     if not os.path.exists(config_file):
@@ -103,36 +104,10 @@ def main():
             kata_path = os.path.join(output_directory, clean_title)
             Path(kata_path).mkdir()
 
-            readme_file = "README.md"
             readme_path = os.path.join(kata_path, readme_file)
 
             with open(readme_path, "w", encoding="utf-8") as file:
                 file.write(f"# [{title}]({base_url}{url})\n")
-
-            subprocess.run(
-                [
-                    "git",
-                    "-C",
-                    output_directory,
-                    "add",
-                    os.path.join(clean_title, readme_file),
-                ],
-                check=True,
-            )
-
-            subprocess.run(
-                [
-                    "git",
-                    "-C",
-                    output_directory,
-                    "commit",
-                    "--message",
-                    f"Add {readme_file}",
-                ],
-                check=True,
-            )
-
-            commits_created += 1
 
             for i in range(solution_count):
                 timestamp = kata.find_all("time-ago")[i].get("datetime")
@@ -180,6 +155,31 @@ def main():
             kata_downloaded += 1
 
         page += 1
+
+    subprocess.run(
+        [
+            "git",
+            "-C",
+            output_directory,
+            "add",
+            f"*{readme_file}",
+        ],
+        check=True,
+    )
+
+    subprocess.run(
+        [
+            "git",
+            "-C",
+            output_directory,
+            "commit",
+            "--message",
+            f"Add {readme_file} files",
+        ],
+        check=True,
+    )
+
+    commits_created += 1
 
     print(
         f"Downloaded {kata_downloaded} Kata "
