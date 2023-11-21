@@ -44,7 +44,6 @@ def main():
 
     headers = {
         "user-agent": re.sub(r"\s+", " ", user_agent),
-        "x-requested-with": "XMLHttpRequest",
     }
 
     Path(output_directory).mkdir()
@@ -71,6 +70,8 @@ def main():
             params = {
                 "page": page,
             }
+
+            headers["x-requested-with"] = "XMLHttpRequest"
 
         response = requests.get(
             f"https://www.codewars.com/users/{config.get('username')}/completed_solutions",
