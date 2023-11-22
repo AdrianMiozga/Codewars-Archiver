@@ -1,4 +1,5 @@
 import json
+import logging
 import os
 import re
 import subprocess
@@ -20,22 +21,22 @@ def main():
     base_url = "https://www.codewars.com"
 
     if not os.path.exists(config_file):
-        print(f"[Error] {config_file} not found!")
+        logging.error("%s not found!", config_file)
         sys.exit(1)
 
     with open(config_file, "r", encoding="utf-8") as file:
         config = json.load(file)
 
     if config.get("username") is None:
-        print(f"[Error] Key 'username' not found in {config_file}")
+        logging.error("Key 'username' not found in %s", config_file)
         sys.exit(1)
 
     if config.get("_session_id") is None:
-        print(f"[Error] Key '_session_id' not found in {config_file}")
+        logging.error("Key '_session_id' not found in %s", config_file)
         sys.exit(1)
 
     if os.path.exists(output_directory):
-        print(f"[Error] Output directory '{output_directory}' already exists")
+        logging.error("Output directory '%s' already exists", output_directory)
         sys.exit(1)
 
     cookies = {
@@ -78,13 +79,13 @@ def main():
         )
 
         if response.status_code != 200:
-            print(f"[Error] Status code: {response.status_code}")
+            logging.error("Status code: %s", response.status_code)
             sys.exit(1)
 
         soup = BeautifulSoup(response.text, "html.parser")
 
         if soup.find_all("div", class_="list-item-solutions"):
-            print(f"Page: {page}")
+            logging.info("Page: %s", page)
         else:
             break
 
@@ -152,12 +153,15 @@ def main():
 
     commits_created += 1
 
-    print(
-        f"Downloaded {kata_downloaded} Kata "
-        f"with {solutions_downloaded} solutions in total "
-        f"and created {commits_created} commits"
+    logging.info(
+        "Downloaded %s Kata with %s solutions in total and created %s commits",
+        kata_downloaded,
+        solutions_downloaded,
+        commits_created,
     )
 
 
 if __name__ == "__main__":
+    logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
+
     main()
