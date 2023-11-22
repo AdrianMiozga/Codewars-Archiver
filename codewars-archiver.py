@@ -110,7 +110,7 @@ def main(cmd_args) -> None:
 
     Path(OUTPUT_DIRECTORY).mkdir()
 
-    git.run_command("init")
+    git.run_command("init", "--quiet")
 
     current_page = 0
     kata_downloaded = 0
@@ -208,6 +208,7 @@ def main(cmd_args) -> None:
 
                 git.run_command(
                     "commit",
+                    "--quiet",
                     "--date",
                     solution.timestamp,
                     "--message",
