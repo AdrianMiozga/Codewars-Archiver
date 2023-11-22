@@ -10,7 +10,7 @@ import requests
 from bs4 import BeautifulSoup
 
 
-def run_git_command(directory, *args):
+def run_git_command(directory: str, *args) -> None:
     subprocess.run(["git", "-C", directory] + list(args), check=True)
 
 
