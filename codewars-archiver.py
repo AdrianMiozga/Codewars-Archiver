@@ -151,6 +151,15 @@ def main(cmd_args) -> None:
                 code = kata.find_all("code")[i].string
                 extension = languages.get(language)
 
+                if extension is None:
+                    extension = language
+
+                    logging.warning(
+                        "Unknown language: %s. Using ‘.%s’ as file extension",
+                        language,
+                        language,
+                    )
+
                 if solution_count > 1:
                     filename = f"Solution {i + 1}.{extension}"
                 else:
