@@ -1,0 +1,18 @@
+{
+  "python": "py",
+  "kotlin": "kt",
+  "java": "java",
+  "sql": "sql",
+  "c": "c",
+  "cpp": "cpp",
+  "csharp": "cs",
+  "javascript": "js",
+  "typescript": "ts",
+  "php": "php",
+  "swift": "swift",
+  "rust": "rs",
+  "ruby": "rb",
+  "haskell": "hs",
+  "coffeescript": "coffee",
+  "crystal": "cr"
+}

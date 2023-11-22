@@ -12,6 +12,7 @@ from bs4 import BeautifulSoup
 VERSION = "0.1.0"
 BASE_URL = "https://www.codewars.com"
 CONFIG_FILE = "config.json"
+LANGUAGES_FILE = "languages.json"
 OUTPUT_DIRECTORY = "output"
 README_FILE = "README.md"
 REQUESTS_TIMEOUT = 10
@@ -59,9 +60,21 @@ def get_configuration() -> dict[str, str]:
     return config
 
 
+def get_languages() -> dict[str, str]:
+    if not Path(CONFIG_FILE).is_file():
+        logging.error("%s not found!", CONFIG_FILE)
+        sys.exit(1)
+
+    with open(LANGUAGES_FILE, "r", encoding="utf-8") as file:
+        languages = json.load(file)
+
+    return languages
+
+
 def main(cmd_args) -> None:
     git = Git(cmd_args.no_git)
     config = get_configuration()
+    languages = get_languages()
 
     if Path(OUTPUT_DIRECTORY).is_dir():
         logging.error("Output directory '%s' already exists", OUTPUT_DIRECTORY)
@@ -136,11 +149,12 @@ def main(cmd_args) -> None:
                 timestamp = kata.find_all("time-ago")[i].get("datetime")
                 language = kata.find_all("code")[i].get("data-language")
                 code = kata.find_all("code")[i].string
+                extension = languages.get(language)
 
                 if solution_count > 1:
-                    filename = f"Solution {i + 1}.{language}"
+                    filename = f"Solution {i + 1}.{extension}"
                 else:
-                    filename = f"Solution.{language}"
+                    filename = f"Solution.{extension}"
 
                 with open(Path(kata_path, filename), "w", encoding="utf-8") as file:
                     file.write(code)
