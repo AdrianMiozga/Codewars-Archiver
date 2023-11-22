@@ -143,7 +143,7 @@ def main(cmd_args) -> None:
                     filename = f"Solution.{language}"
 
                 with open(Path(kata_path, filename), "w", encoding="utf-8") as file:
-                    file.write(f"{code}\n")
+                    file.write(code)
 
                 git.run_command("add", Path(clean_title, filename))
 
