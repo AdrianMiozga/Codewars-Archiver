@@ -19,6 +19,12 @@ def run_git_command(directory: str, *args) -> None:
     subprocess.run(["git", "-C", directory] + list(args), check=True)
 
 
+def check_git_output(directory: str, *args) -> str:
+    return subprocess.check_output(
+        ["git", "-C", directory] + list(args), encoding="utf-8"
+    ).strip()
+
+
 def get_config() -> dict:
     if not os.path.exists(CONFIG_FILE):
         logging.error("%s not found!", CONFIG_FILE)
@@ -64,7 +70,6 @@ def main():
     page = 0
     kata_downloaded = 0
     solutions_downloaded = 0
-    commits_created = 0
 
     while True:
         if page == 0:
@@ -141,7 +146,6 @@ def main():
                     f"Add {filename}\n\nKata name: {title}",
                 )
 
-                commits_created += 1
                 solutions_downloaded += 1
 
             kata_downloaded += 1
@@ -157,7 +161,7 @@ def main():
         f"Add {README_FILE} files",
     )
 
-    commits_created += 1
+    commits_created = check_git_output(OUTPUT_DIRECTORY, "rev-list", "--count", "HEAD")
 
     logging.info(
         "Downloaded %s Kata with %s solutions in total and created %s commits",
