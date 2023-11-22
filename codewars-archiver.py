@@ -237,6 +237,7 @@ def main(cmd_args) -> None:
 
     git.run_command(
         "commit",
+        "--quiet",
         "--message",
         f"Add {README_FILE} files",
     )
