@@ -192,17 +192,16 @@ def main(cmd_args) -> None:
         f"Add {README_FILE} files",
     )
 
-    commits_created = git.check_output("rev-list", "--count", "HEAD")
+    message = (
+        f"Downloaded {kata_downloaded} Kata"
+        f" with {solutions_downloaded} solutions in total"
+    )
 
-    first_part = f"Downloaded {kata_downloaded} Kata"
-    first_part += f" with {solutions_downloaded} solutions in total"
+    if not git.no_git:
+        commits_created = git.check_output("rev-list", "--count", "HEAD")
+        message += f" and created {commits_created} commits"
 
-    second_part = ""
-
-    if commits_created != "":
-        second_part = f" and created {commits_created} commits"
-
-    logging.info("%s%s", first_part, second_part)
+    logging.info("%s", message)
 
 
 if __name__ == "__main__":
