@@ -11,7 +11,7 @@ from bs4 import BeautifulSoup
 
 def main():
     config_file = "config.json"
-    output_directory = os.path.join("output")
+    output_directory = "output"
     readme_file = "README.md"
     base_url = "https://www.codewars.com"
 
