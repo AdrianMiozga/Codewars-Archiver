@@ -166,8 +166,10 @@ def main(cmd_args) -> None:
                     code.string,
                 )
 
-                if solution not in unique_solutions:
-                    unique_solutions.append(solution)
+                if solution in unique_solutions:
+                    unique_solutions.remove(solution)
+
+                unique_solutions.append(solution)
 
             # Make sure the title is a valid directory name
             clean_title = re.sub(r"[^-\w ]", "", title)
