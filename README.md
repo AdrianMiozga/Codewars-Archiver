@@ -1,3 +1,8 @@
-# [Codewars](https://www.codewars.com/)
+# Codewars Archiver
 
-- Python 3.11.6
+[Codewars](https://www.codewars.com/)
+
+## Dependencies
+
+- Python
+- Git
