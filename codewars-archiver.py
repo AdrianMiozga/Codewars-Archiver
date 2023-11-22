@@ -9,6 +9,10 @@ import requests
 from bs4 import BeautifulSoup
 
 
+def run_git_command(directory, *args):
+    subprocess.run(["git", "-C", directory] + list(args), check=True)
+
+
 def main():
     config_file = "config.json"
     output_directory = "output"
@@ -48,15 +52,7 @@ def main():
 
     Path(output_directory).mkdir()
 
-    subprocess.run(
-        [
-            "git",
-            "-C",
-            output_directory,
-            "init",
-        ],
-        check=True,
-    )
+    run_git_command(output_directory, "init")
 
     page = 0
     kata_downloaded = 0
@@ -125,29 +121,17 @@ def main():
                 ) as file:
                     file.write(f"{code}\n")
 
-                subprocess.run(
-                    [
-                        "git",
-                        "-C",
-                        output_directory,
-                        "add",
-                        os.path.join(clean_title, filename),
-                    ],
-                    check=True,
+                run_git_command(
+                    output_directory, "add", os.path.join(clean_title, filename)
                 )
 
-                subprocess.run(
-                    [
-                        "git",
-                        "-C",
-                        output_directory,
-                        "commit",
-                        "--date",
-                        timestamp,
-                        "--message",
-                        f"Add {filename}\n\nKata name: {title}",
-                    ],
-                    check=True,
+                run_git_command(
+                    output_directory,
+                    "commit",
+                    "--date",
+                    timestamp,
+                    "--message",
+                    f"Add {filename}\n\nKata name: {title}",
                 )
 
                 commits_created += 1
@@ -157,27 +141,13 @@ def main():
 
         page += 1
 
-    subprocess.run(
-        [
-            "git",
-            "-C",
-            output_directory,
-            "add",
-            f"*{readme_file}",
-        ],
-        check=True,
-    )
+    run_git_command(output_directory, "add", f"*{readme_file}")
 
-    subprocess.run(
-        [
-            "git",
-            "-C",
-            output_directory,
-            "commit",
-            "--message",
-            f"Add {readme_file} files",
-        ],
-        check=True,
+    run_git_command(
+        output_directory,
+        "commit",
+        "--message",
+        f"Add {readme_file} files",
     )
 
     commits_created += 1
