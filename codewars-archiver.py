@@ -50,11 +50,11 @@ def get_configuration() -> dict[str, str]:
         config = json.load(file)
 
     if config.get("username") is None:
-        logging.error("Key 'username' not found in %s", CONFIG_FILE)
+        logging.error("Key ‘username’ not found in %s", CONFIG_FILE)
         sys.exit(1)
 
     if config.get("_session_id") is None:
-        logging.error("Key '_session_id' not found in %s", CONFIG_FILE)
+        logging.error("Key ‘_session_id’ not found in %s", CONFIG_FILE)
         sys.exit(1)
 
     return config
@@ -77,7 +77,7 @@ def main(cmd_args) -> None:
     languages = get_languages()
 
     if Path(OUTPUT_DIRECTORY).is_dir():
-        logging.error("Output directory '%s' already exists", OUTPUT_DIRECTORY)
+        logging.error("Output directory ‘%s’ already exists", OUTPUT_DIRECTORY)
         sys.exit(1)
 
     params = {}
@@ -208,19 +208,29 @@ def main(cmd_args) -> None:
 if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
 
-    parser = argparse.ArgumentParser(
-        prog="Codewars Archiver",
+    parser = argparse.ArgumentParser(prog="Codewars Archiver", add_help=False)
+
+    options = parser.add_argument_group("Options")
+
+    options.add_argument(
+        "-h",
+        "--help",
+        action="help",
+        help="Print this help message and exit",
     )
 
-    parser.add_argument(
-        "--no-git", action="store_true", help="Don't create a git repository"
-    )
-
-    parser.add_argument(
+    options.add_argument(
         "-v",
         "--version",
         action="version",
         version=VERSION,
+        help="Print program version and exit",
+    )
+
+    options.add_argument(
+        "--no-git",
+        action="store_true",
+        help="Don’t create a git repository",
     )
 
     main(parser.parse_args())
