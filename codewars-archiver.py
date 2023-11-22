@@ -18,6 +18,19 @@ README_FILE = "README.md"
 REQUESTS_TIMEOUT = 10
 
 
+class Solution:
+    def __init__(self, timestamp: str, language: str, code: str) -> None:
+        self.timestamp = timestamp
+        self.language = language
+        self.code = code
+
+    def __eq__(self, other):
+        if isinstance(other, Solution):
+            return self.code == other.code
+
+        return False
+
+
 class Git:
     def __init__(self, no_git: bool) -> None:
         self.no_git = no_git
@@ -140,7 +153,20 @@ def main(cmd_args) -> None:
         for kata in katas:
             url = kata.find("div", class_="item-title").a.get("href")
             title = kata.find("div", class_="item-title").a.string.strip()
-            solution_count = len(kata.find_all("code"))
+            code_list = kata.find_all("code")
+            timestamps = kata.find_all("time-ago")
+
+            unique_solutions = []
+
+            for index, code in enumerate(code_list):
+                solution = Solution(
+                    timestamps[index].get("datetime"),
+                    code.get("data-language"),
+                    code.string,
+                )
+
+                if solution not in unique_solutions:
+                    unique_solutions.append(solution)
 
             # Make sure the title is a valid directory name
             clean_title = re.sub(r"[^-\w ]", "", title)
@@ -155,40 +181,47 @@ def main(cmd_args) -> None:
             with open(readme_path, "w", encoding="utf-8") as file:
                 file.write(f"# [{title}]({BASE_URL}{url})\n")
 
-            for i in range(solution_count):
-                timestamp = kata.find_all("time-ago")[i].get("datetime")
-                language = kata.find_all("code")[i].get("data-language")
-                code = kata.find_all("code")[i].string
-                extension = languages.get(language)
+            for index, solution in enumerate(unique_solutions):
+                extension = languages.get(solution.language)
 
                 if extension is None:
-                    extension = language
+                    extension = solution.language
 
                     logging.warning(
                         "Unknown language: %s. Using ‘.%s’ as file extension",
-                        language,
-                        language,
+                        solution.language,
+                        solution.language,
                     )
 
-                if solution_count > 1:
-                    filename = f"Solution {i + 1}.{extension}"
+                if len(unique_solutions) > 1:
+                    filename = f"Solution {index + 1}.{extension}"
                 else:
                     filename = f"Solution.{extension}"
 
                 with open(Path(kata_path, filename), "w", encoding="utf-8") as file:
-                    file.write(code)
+                    file.write(solution.code)
 
                 git.run_command("add", Path(clean_title, filename))
 
                 git.run_command(
                     "commit",
                     "--date",
-                    timestamp,
+                    solution.timestamp,
                     "--message",
                     f"Add {filename}\n\nKata name: {title}",
                 )
 
                 solutions_downloaded += 1
+
+            if len(unique_solutions) != len(code_list):
+                message = f"Skipped {len(code_list) - len(unique_solutions)} duplicate solution"
+
+                if len(code_list) - len(unique_solutions) != 1:
+                    message += "s"
+
+                message += f" for ‘{title}’"
+
+                logging.info(message)
 
             kata_downloaded += 1
 
