@@ -25,7 +25,7 @@ def check_git_output(*args) -> str:
     ).strip()
 
 
-def get_config() -> dict:
+def get_config() -> dict[str, str]:
     if not os.path.exists(CONFIG_FILE):
         logging.error("%s not found!", CONFIG_FILE)
         sys.exit(1)
@@ -44,7 +44,7 @@ def get_config() -> dict:
     return config
 
 
-def main():
+def main() -> None:
     config = get_config()
 
     if os.path.exists(OUTPUT_DIRECTORY):
