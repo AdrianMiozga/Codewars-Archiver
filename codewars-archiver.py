@@ -15,13 +15,13 @@ OUTPUT_DIRECTORY = "output"
 README_FILE = "README.md"
 
 
-def run_git_command(directory: str, *args) -> None:
-    subprocess.run(["git", "-C", directory] + list(args), check=True)
+def run_git_command(*args) -> None:
+    subprocess.run(["git", "-C", OUTPUT_DIRECTORY] + list(args), check=True)
 
 
-def check_git_output(directory: str, *args) -> str:
+def check_git_output(*args) -> str:
     return subprocess.check_output(
-        ["git", "-C", directory] + list(args), encoding="utf-8"
+        ["git", "-C", OUTPUT_DIRECTORY] + list(args), encoding="utf-8"
     ).strip()
 
 
@@ -65,7 +65,7 @@ def main():
 
     Path(OUTPUT_DIRECTORY).mkdir()
 
-    run_git_command(OUTPUT_DIRECTORY, "init")
+    run_git_command("init")
 
     page = 0
     kata_downloaded = 0
@@ -133,12 +133,9 @@ def main():
                 ) as file:
                     file.write(f"{code}\n")
 
-                run_git_command(
-                    OUTPUT_DIRECTORY, "add", os.path.join(clean_title, filename)
-                )
+                run_git_command("add", os.path.join(clean_title, filename))
 
                 run_git_command(
-                    OUTPUT_DIRECTORY,
                     "commit",
                     "--date",
                     timestamp,
@@ -152,16 +149,15 @@ def main():
 
         page += 1
 
-    run_git_command(OUTPUT_DIRECTORY, "add", f"*{README_FILE}")
+    run_git_command("add", f"*{README_FILE}")
 
     run_git_command(
-        OUTPUT_DIRECTORY,
         "commit",
         "--message",
         f"Add {README_FILE} files",
     )
 
-    commits_created = check_git_output(OUTPUT_DIRECTORY, "rev-list", "--count", "HEAD")
+    commits_created = check_git_output("rev-list", "--count", "HEAD")
 
     logging.info(
         "Downloaded %s Kata with %s solutions in total and created %s commits",
