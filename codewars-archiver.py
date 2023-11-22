@@ -1,6 +1,5 @@
 import json
 import logging
-import os
 import re
 import subprocess
 import sys
@@ -29,7 +28,7 @@ def check_git_output(*args) -> str:
 
 
 def get_configuration() -> dict[str, str]:
-    if not os.path.exists(CONFIG_FILE):
+    if not Path(CONFIG_FILE).is_file():
         logging.error("%s not found!", CONFIG_FILE)
         sys.exit(1)
 
@@ -50,7 +49,7 @@ def get_configuration() -> dict[str, str]:
 def main() -> None:
     config = get_configuration()
 
-    if os.path.exists(OUTPUT_DIRECTORY):
+    if Path(OUTPUT_DIRECTORY).is_dir():
         logging.error("Output directory '%s' already exists", OUTPUT_DIRECTORY)
         sys.exit(1)
 
@@ -111,10 +110,10 @@ def main() -> None:
 
             clean_title = re.sub(r"\s+", " ", clean_title)
 
-            kata_path = os.path.join(OUTPUT_DIRECTORY, clean_title)
+            kata_path = Path(OUTPUT_DIRECTORY, clean_title)
             Path(kata_path).mkdir()
 
-            readme_path = os.path.join(kata_path, README_FILE)
+            readme_path = Path(kata_path, README_FILE)
 
             with open(readme_path, "w", encoding="utf-8") as file:
                 file.write(f"# [{title}]({BASE_URL}{url})\n")
@@ -129,12 +128,10 @@ def main() -> None:
                 else:
                     filename = f"Solution.{language}"
 
-                with open(
-                    os.path.join(kata_path, filename), "w", encoding="utf-8"
-                ) as file:
+                with open(Path(kata_path, filename), "w", encoding="utf-8") as file:
                     file.write(f"{code}\n")
 
-                run_git_command("add", os.path.join(clean_title, filename))
+                run_git_command("add", Path(clean_title, filename))
 
                 run_git_command(
                     "commit",
