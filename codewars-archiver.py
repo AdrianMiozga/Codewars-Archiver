@@ -13,19 +13,22 @@ BASE_URL = "https://www.codewars.com"
 CONFIG_FILE = "config.json"
 OUTPUT_DIRECTORY = "output"
 README_FILE = "README.md"
+REQUESTS_TIMEOUT = 10
 
 
 def run_git_command(*args) -> None:
+    """Run a git command in the output directory."""
     subprocess.run(["git", "-C", OUTPUT_DIRECTORY] + list(args), check=True)
 
 
 def check_git_output(*args) -> str:
+    """Run a git command in the output directory and return stripped output."""
     return subprocess.check_output(
         ["git", "-C", OUTPUT_DIRECTORY] + list(args), encoding="utf-8"
     ).strip()
 
 
-def get_config() -> dict[str, str]:
+def get_configuration() -> dict[str, str]:
     if not os.path.exists(CONFIG_FILE):
         logging.error("%s not found!", CONFIG_FILE)
         sys.exit(1)
@@ -45,11 +48,13 @@ def get_config() -> dict[str, str]:
 
 
 def main() -> None:
-    config = get_config()
+    config = get_configuration()
 
     if os.path.exists(OUTPUT_DIRECTORY):
         logging.error("Output directory '%s' already exists", OUTPUT_DIRECTORY)
         sys.exit(1)
+
+    params = {}
 
     cookies = {
         "_session_id": config.get("_session_id"),
@@ -67,26 +72,21 @@ def main() -> None:
 
     run_git_command("init")
 
-    page = 0
+    current_page = 0
     kata_downloaded = 0
     solutions_downloaded = 0
 
     while True:
-        if page == 0:
-            params = {}
-        else:
-            params = {
-                "page": page,
-            }
-
+        if current_page > 0:
+            params["page"] = current_page
             headers["x-requested-with"] = "XMLHttpRequest"
 
         response = requests.get(
-            f"https://www.codewars.com/users/{config.get('username')}/completed_solutions",
+            f"{BASE_URL}/users/{config.get('username')}/completed_solutions",
             params=params,
             cookies=cookies,
             headers=headers,
-            timeout=10,
+            timeout=REQUESTS_TIMEOUT,
         )
 
         if response.status_code != 200:
@@ -96,8 +96,9 @@ def main() -> None:
         soup = BeautifulSoup(response.text, "html.parser")
 
         if soup.find_all("div", class_="list-item-solutions"):
-            logging.info("Page: %s", page)
+            logging.info("Page: %s", current_page)
         else:
+            # Scraped page doesn't contain any Kata
             break
 
         for kata in soup.find_all("div", class_="list-item-solutions"):
@@ -147,7 +148,7 @@ def main() -> None:
 
             kata_downloaded += 1
 
-        page += 1
+        current_page += 1
 
     run_git_command("add", f"*{README_FILE}")
 
