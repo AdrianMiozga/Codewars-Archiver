@@ -1,3 +1,4 @@
+import argparse
 import json
 import logging
 import re
@@ -15,16 +16,27 @@ README_FILE = "README.md"
 REQUESTS_TIMEOUT = 10
 
 
-def run_git_command(*args) -> None:
-    """Run a git command in the output directory."""
-    subprocess.run(["git", "-C", OUTPUT_DIRECTORY] + list(args), check=True)
+class Git:
+    def __init__(self, no_git: bool) -> None:
+        self.no_git = no_git
 
+    def run_command(self, *args) -> None:
+        """Run a git command in the output directory."""
 
-def check_git_output(*args) -> str:
-    """Run a git command in the output directory and return stripped output."""
-    return subprocess.check_output(
-        ["git", "-C", OUTPUT_DIRECTORY] + list(args), encoding="utf-8"
-    ).strip()
+        if self.no_git:
+            return
+
+        subprocess.run(["git", "-C", OUTPUT_DIRECTORY] + list(args), check=True)
+
+    def check_output(self, *args) -> str:
+        """Run a git command in the output directory and return stripped output."""
+
+        if self.no_git:
+            return ""
+
+        return subprocess.check_output(
+            ["git", "-C", OUTPUT_DIRECTORY] + list(args), encoding="utf-8"
+        ).strip()
 
 
 def get_configuration() -> dict[str, str]:
@@ -46,7 +58,8 @@ def get_configuration() -> dict[str, str]:
     return config
 
 
-def main() -> None:
+def main(cmd_args) -> None:
+    git = Git(cmd_args.no_git)
     config = get_configuration()
 
     if Path(OUTPUT_DIRECTORY).is_dir():
@@ -69,7 +82,7 @@ def main() -> None:
 
     Path(OUTPUT_DIRECTORY).mkdir()
 
-    run_git_command("init")
+    git.run_command("init")
 
     current_page = 0
     kata_downloaded = 0
@@ -131,9 +144,9 @@ def main() -> None:
                 with open(Path(kata_path, filename), "w", encoding="utf-8") as file:
                     file.write(f"{code}\n")
 
-                run_git_command("add", Path(clean_title, filename))
+                git.run_command("add", Path(clean_title, filename))
 
-                run_git_command(
+                git.run_command(
                     "commit",
                     "--date",
                     timestamp,
@@ -147,25 +160,36 @@ def main() -> None:
 
         current_page += 1
 
-    run_git_command("add", f"*{README_FILE}")
+    git.run_command("add", f"*{README_FILE}")
 
-    run_git_command(
+    git.run_command(
         "commit",
         "--message",
         f"Add {README_FILE} files",
     )
 
-    commits_created = check_git_output("rev-list", "--count", "HEAD")
+    commits_created = git.check_output("rev-list", "--count", "HEAD")
 
-    logging.info(
-        "Downloaded %s Kata with %s solutions in total and created %s commits",
-        kata_downloaded,
-        solutions_downloaded,
-        commits_created,
-    )
+    first_part = f"Downloaded {kata_downloaded} Kata"
+    first_part += f" with {solutions_downloaded} solutions in total"
+
+    second_part = ""
+
+    if commits_created != "":
+        second_part = f" and created {commits_created} commits"
+
+    logging.info("%s%s", first_part, second_part)
 
 
 if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
 
-    main()
+    parser = argparse.ArgumentParser(
+        prog="Codewars Archiver",
+    )
+
+    parser.add_argument(
+        "--no-git", action="store_true", help="Don't create a git repository"
+    )
+
+    main(parser.parse_args())
