@@ -9,6 +9,7 @@ from pathlib import Path
 import requests
 from bs4 import BeautifulSoup
 
+NAME = "Codewars Archiver"
 VERSION = "0.1.0"
 BASE_URL = "https://www.codewars.com"
 CONFIG_FILE = "config.json"
@@ -193,10 +194,12 @@ def main(cmd_args) -> None:
                         solution.language,
                     )
 
+                filename = "Solution"
+
                 if len(unique_solutions) > 1:
-                    filename = f"Solution {index + 1}.{extension}"
-                else:
-                    filename = f"Solution.{extension}"
+                    filename += f" {index + 1}"
+
+                filename += f".{extension}"
 
                 with open(Path(kata_path, filename), "w", encoding="utf-8") as file:
                     file.write(solution.code)
@@ -244,13 +247,13 @@ def main(cmd_args) -> None:
         commits_created = git.check_output("rev-list", "--count", "HEAD")
         message += f" and created {commits_created} commits"
 
-    logging.info("%s", message)
+    logging.info(message)
 
 
 if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
 
-    parser = argparse.ArgumentParser(prog="Codewars Archiver", add_help=False)
+    parser = argparse.ArgumentParser(prog=NAME, add_help=False)
 
     options = parser.add_argument_group("Options")
 
