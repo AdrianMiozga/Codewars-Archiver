@@ -9,6 +9,7 @@ from pathlib import Path
 import requests
 from bs4 import BeautifulSoup
 
+VERSION = "0.1.0"
 BASE_URL = "https://www.codewars.com"
 CONFIG_FILE = "config.json"
 OUTPUT_DIRECTORY = "output"
@@ -190,6 +191,13 @@ if __name__ == "__main__":
 
     parser.add_argument(
         "--no-git", action="store_true", help="Don't create a git repository"
+    )
+
+    parser.add_argument(
+        "-v",
+        "--version",
+        action="version",
+        version=VERSION,
     )
 
     main(parser.parse_args())
