@@ -120,8 +120,9 @@ def main(cmd_args) -> None:
             sys.exit(1)
 
         soup = BeautifulSoup(response.text, "html.parser")
+        katas = soup.find_all("div", class_="list-item-solutions")
 
-        if soup.find_all("div", class_="list-item-solutions"):
+        if katas:
             logging.info("Page: %s", current_page)
         else:
             # Scraped page doesn't contain any Kata
@@ -136,7 +137,7 @@ def main(cmd_args) -> None:
             else:
                 break
 
-        for kata in soup.find_all("div", class_="list-item-solutions"):
+        for kata in katas:
             url = kata.find("div", class_="item-title").a.get("href")
             title = kata.find("div", class_="item-title").a.string.strip()
             solution_count = len(kata.find_all("code"))
