@@ -125,7 +125,16 @@ def main(cmd_args) -> None:
             logging.info("Page: %s", current_page)
         else:
             # Scraped page doesn't contain any Kata
-            break
+
+            if current_page == 0:
+                logging.error(
+                    "Session cookie is invalid or the user ‘%s’ has no completed Kata",
+                    config.get("username"),
+                )
+
+                sys.exit(1)
+            else:
+                break
 
         for kata in soup.find_all("div", class_="list-item-solutions"):
             url = kata.find("div", class_="item-title").a.get("href")
