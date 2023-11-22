@@ -9,34 +9,40 @@ from pathlib import Path
 import requests
 from bs4 import BeautifulSoup
 
+BASE_URL = "https://www.codewars.com"
+CONFIG_FILE = "config.json"
+OUTPUT_DIRECTORY = "output"
+README_FILE = "README.md"
+
 
 def run_git_command(directory: str, *args) -> None:
     subprocess.run(["git", "-C", directory] + list(args), check=True)
 
 
-def main():
-    config_file = "config.json"
-    output_directory = "output"
-    readme_file = "README.md"
-    base_url = "https://www.codewars.com"
-
-    if not os.path.exists(config_file):
-        logging.error("%s not found!", config_file)
+def get_config() -> dict:
+    if not os.path.exists(CONFIG_FILE):
+        logging.error("%s not found!", CONFIG_FILE)
         sys.exit(1)
 
-    with open(config_file, "r", encoding="utf-8") as file:
+    with open(CONFIG_FILE, "r", encoding="utf-8") as file:
         config = json.load(file)
 
     if config.get("username") is None:
-        logging.error("Key 'username' not found in %s", config_file)
+        logging.error("Key 'username' not found in %s", CONFIG_FILE)
         sys.exit(1)
 
     if config.get("_session_id") is None:
-        logging.error("Key '_session_id' not found in %s", config_file)
+        logging.error("Key '_session_id' not found in %s", CONFIG_FILE)
         sys.exit(1)
 
-    if os.path.exists(output_directory):
-        logging.error("Output directory '%s' already exists", output_directory)
+    return config
+
+
+def main():
+    config = get_config()
+
+    if os.path.exists(OUTPUT_DIRECTORY):
+        logging.error("Output directory '%s' already exists", OUTPUT_DIRECTORY)
         sys.exit(1)
 
     cookies = {
@@ -51,9 +57,9 @@ def main():
         "user-agent": re.sub(r"\s+", " ", user_agent),
     }
 
-    Path(output_directory).mkdir()
+    Path(OUTPUT_DIRECTORY).mkdir()
 
-    run_git_command(output_directory, "init")
+    run_git_command(OUTPUT_DIRECTORY, "init")
 
     page = 0
     kata_downloaded = 0
@@ -99,13 +105,13 @@ def main():
 
             clean_title = re.sub(r"\s+", " ", clean_title)
 
-            kata_path = os.path.join(output_directory, clean_title)
+            kata_path = os.path.join(OUTPUT_DIRECTORY, clean_title)
             Path(kata_path).mkdir()
 
-            readme_path = os.path.join(kata_path, readme_file)
+            readme_path = os.path.join(kata_path, README_FILE)
 
             with open(readme_path, "w", encoding="utf-8") as file:
-                file.write(f"# [{title}]({base_url}{url})\n")
+                file.write(f"# [{title}]({BASE_URL}{url})\n")
 
             for i in range(solution_count):
                 timestamp = kata.find_all("time-ago")[i].get("datetime")
@@ -123,11 +129,11 @@ def main():
                     file.write(f"{code}\n")
 
                 run_git_command(
-                    output_directory, "add", os.path.join(clean_title, filename)
+                    OUTPUT_DIRECTORY, "add", os.path.join(clean_title, filename)
                 )
 
                 run_git_command(
-                    output_directory,
+                    OUTPUT_DIRECTORY,
                     "commit",
                     "--date",
                     timestamp,
@@ -142,13 +148,13 @@ def main():
 
         page += 1
 
-    run_git_command(output_directory, "add", f"*{readme_file}")
+    run_git_command(OUTPUT_DIRECTORY, "add", f"*{README_FILE}")
 
     run_git_command(
-        output_directory,
+        OUTPUT_DIRECTORY,
         "commit",
         "--message",
-        f"Add {readme_file} files",
+        f"Add {README_FILE} files",
     )
 
     commits_created += 1
