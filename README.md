@@ -26,7 +26,7 @@ It has been tested on Windows and Linux.
 
 ## Dependencies
 
-- [Python](https://www.python.org/)
+- [Python](https://www.python.org/) 3.9+
   - [requests](https://requests.readthedocs.io/en/latest/)
   - [beautifulsoup4](https://www.crummy.com/software/BeautifulSoup/bs4/doc/)
 - (Optional) [Git](https://git-scm.com/)
