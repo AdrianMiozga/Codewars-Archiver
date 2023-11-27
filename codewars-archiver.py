@@ -19,6 +19,19 @@ README_FILE = "README.md"
 REQUESTS_TIMEOUT = 10
 
 
+class Formatter(logging.Formatter):
+    """Custom formatter class that prints INFO messages without a prefix."""
+
+    def format(self, record):
+        # pylint: disable=protected-access
+        if record.levelno == logging.INFO:
+            self._style._fmt = "%(message)s"
+        else:
+            self._style._fmt = "%(levelname)s: %(message)s"
+
+        return super().format(record)
+
+
 class CapitalisedHelpFormatter(argparse.HelpFormatter):
     """HelpFormatter is a private API."""
 
@@ -269,7 +282,11 @@ def main(cmd_args) -> None:
 
 
 if __name__ == "__main__":
-    logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
+    logger = logging.getLogger()
+    handler = logging.StreamHandler()
+    handler.setFormatter(Formatter())
+    logger.setLevel(logging.INFO)
+    logger.addHandler(handler)
 
     parser = argparse.ArgumentParser(
         prog=NAME, add_help=False, formatter_class=CapitalisedHelpFormatter
