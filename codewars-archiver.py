@@ -9,7 +9,7 @@ from pathlib import Path
 import requests
 from bs4 import BeautifulSoup
 
-NAME = "Codewars Archiver"
+NAME = "codewars-archiver.py"
 VERSION = "0.1.0"
 BASE_URL = "https://www.codewars.com"
 CONFIG_FILE = "config.json"
