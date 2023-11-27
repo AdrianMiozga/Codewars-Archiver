@@ -34,7 +34,7 @@ It has been tested on Windows and Linux.
 ## Usage
 
 ```
-Usage: Codewars Archiver [-h] [-v] [--no-git]
+Usage: codewars-archiver.py [-h] [-v] [--no-git]
 
 Options:
   -h, --help     Print this help message and exit
