@@ -1,6 +1,9 @@
 # Codewars Archiver
 
-Codewars Archiver is a command-line program that downloads solutions from the [Codewars](https://www.codewars.com/) website for a specific user. It works by parsing the HTML of the website by using [Beautiful Soup](https://www.crummy.com/software/BeautifulSoup/bs4/doc/). Because of that, it might stop working if the website changes.
+> [!WARNING]
+> This software uses HTML parsing and it might break in the future.
+
+Codewars Archiver is a command-line program that downloads solutions from the [Codewars](https://www.codewars.com/) website for a specific user. It works by parsing the HTML of the website by using [Beautiful Soup](https://www.crummy.com/software/BeautifulSoup/bs4/doc/).
 
 Besides downloading source code it also creates a Git repository and creates a commit for each solution file. Every commit has changed `AuthorDate` to a submit date from the Codewars website. This preserves when the code was actually written. `README.md` files created for each Kata are commited all at once without changing the date. Creation of a repository can be disabled with the `--no-git` option.
 
