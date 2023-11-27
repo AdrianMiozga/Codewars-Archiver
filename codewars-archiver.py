@@ -30,6 +30,8 @@ class CapitalisedHelpFormatter(argparse.HelpFormatter):
 
 
 class Solution:
+    """Represents a solution to a Kata."""
+
     def __init__(self, timestamp: str, language: str, code: str) -> None:
         self.timestamp = timestamp
         self.language = language
@@ -43,6 +45,8 @@ class Solution:
 
 
 class Git:
+    """Wrapper for git commands."""
+
     def __init__(self, no_git: bool) -> None:
         self.no_git = no_git
 
