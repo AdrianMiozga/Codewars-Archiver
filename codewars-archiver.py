@@ -151,7 +151,7 @@ def main(cmd_args) -> None:
         katas = soup.find_all("div", class_="list-item-solutions")
 
         if katas:
-            logging.info("Page: %s", current_page)
+            logging.info("Page: %s", current_page + 1)
         else:
             # Scraped page doesn't contain any Kata
 
