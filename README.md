@@ -7,6 +7,8 @@ Codewars Archiver is a command-line program that downloads solutions from the [C
 
 Besides downloading source code it also creates a Git repository and creates a commit for each solution file. Every commit has changed `AuthorDate` to a submit date from the Codewars website. This preserves when the code was actually written. `README.md` files created for each Kata are commited all at once without changing the date. Creation of a repository can be disabled with the `--no-git` option.
 
+![Preview](assets/recording.gif)
+
 It creates the following file structure:
 
 ```
