@@ -2,7 +2,7 @@
 
 Codewars Archiver is a command-line program that downloads solutions from the [Codewars](https://www.codewars.com/) website for a specific user. It works by parsing the HTML of the website by using [Beautiful Soup](https://www.crummy.com/software/BeautifulSoup/bs4/doc/). Because of that, it might stop working if the website changes.
 
-Besides downloading source code it also creates a Git repository and creates a commit for each solution file. Every commit has changed `AuthorDate` to a submit date from the Codewars website. This preserves when the code was actually written. `README.md` files created for each Kata are commited all at once without changing the date. Creation of a repository can be disabled with the `--no-git` option. It is the only command-line argument besides `--help` and `--version`.
+Besides downloading source code it also creates a Git repository and creates a commit for each solution file. Every commit has changed `AuthorDate` to a submit date from the Codewars website. This preserves when the code was actually written. `README.md` files created for each Kata are commited all at once without changing the date. Creation of a repository can be disabled with the `--no-git` option.
 
 It creates the following file structure:
 
@@ -32,6 +32,15 @@ It has been tested on Windows and Linux.
 - (Optional) [Git](https://git-scm.com/) 2.9+
 
 ## Usage
+
+```
+Usage: Codewars Archiver [-h] [-v] [--no-git]
+
+Options:
+  -h, --help     Print this help message and exit
+  -v, --version  Print program version and exit
+  --no-git       Don’t create a git repository
+```
 
 Create a `config.json` file in the same directory as `codewars_archiver.py` from the following template. Replace values of `username` and `_session_id` with your Codewars username and `_session_id` cookie.
 
