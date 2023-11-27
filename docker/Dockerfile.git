@@ -1,0 +1,31 @@
+# Dockerfile that helps with testing what is the minimal Git version
+
+FROM python:3.9-slim-bookworm
+
+RUN apt update
+RUN apt install --yes curl build-essential dh-autoreconf libcurl4-gnutls-dev libexpat1-dev gettext libz-dev libssl-dev
+
+# Install Git from source
+ARG GIT_VERSION=git-2.9.0
+
+RUN curl -O https://mirrors.edge.kernel.org/pub/software/scm/git/$GIT_VERSION.tar.gz
+RUN tar -zxf ./$GIT_VERSION.tar.gz
+WORKDIR $GIT_VERSION
+RUN make configure
+RUN ./configure --prefix=/usr
+RUN make all
+RUN make install
+
+# Execute script
+WORKDIR /
+ADD config.json .
+ADD languages.json .
+ADD codewars-archiver.py .
+ADD requirements.txt .
+
+RUN git config --global user.email "Docker@Docker.com"
+RUN git config --global user.name "Docker"
+
+RUN pip install --requirement requirements.txt
+
+ENTRYPOINT ["bash"]

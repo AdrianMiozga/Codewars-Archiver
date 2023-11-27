@@ -1,0 +1,15 @@
+# Dockerfile that helps with testing what is the minimal Python version
+
+FROM python:3.9
+
+ADD config.json .
+ADD languages.json .
+ADD codewars-archiver.py .
+ADD requirements.txt .
+
+RUN git config --global user.email "Docker@Docker.com"
+RUN git config --global user.name "Docker"
+
+RUN pip install --requirement requirements.txt
+
+CMD ["python", "./codewars-archiver.py"]
