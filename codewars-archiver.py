@@ -89,8 +89,8 @@ def get_configuration() -> dict[str, str]:
 
 
 def get_languages() -> dict[str, str]:
-    if not Path(CONFIG_FILE).is_file():
-        logging.error("%s not found!", CONFIG_FILE)
+    if not Path(LANGUAGES_FILE).is_file():
+        logging.error("%s not found!", LANGUAGES_FILE)
         sys.exit(1)
 
     with open(LANGUAGES_FILE, "r", encoding="utf-8") as file:
