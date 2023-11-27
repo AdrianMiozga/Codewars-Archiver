@@ -19,6 +19,16 @@ README_FILE = "README.md"
 REQUESTS_TIMEOUT = 10
 
 
+class CapitalisedHelpFormatter(argparse.HelpFormatter):
+    """HelpFormatter is a private API."""
+
+    def add_usage(self, usage, actions, groups, prefix=None):
+        if prefix is None:
+            prefix = "Usage: "
+
+        return super().add_usage(usage, actions, groups, prefix)
+
+
 class Solution:
     def __init__(self, timestamp: str, language: str, code: str) -> None:
         self.timestamp = timestamp
@@ -257,7 +267,9 @@ def main(cmd_args) -> None:
 if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
 
-    parser = argparse.ArgumentParser(prog=NAME, add_help=False)
+    parser = argparse.ArgumentParser(
+        prog=NAME, add_help=False, formatter_class=CapitalisedHelpFormatter
+    )
 
     options = parser.add_argument_group("Options")
 
