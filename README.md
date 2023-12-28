@@ -9,7 +9,7 @@ Besides downloading source code it also creates a Git repository and creates a c
 
 ![Preview](assets/recording.gif)
 
-It creates the following file structure:
+It creates the following file structure. Repository created by this program can be found at [AdrianMiozga/Codewars](https://github.com/AdrianMiozga/Codewars).
 
 ```
 └───output
