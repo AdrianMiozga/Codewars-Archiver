@@ -13,14 +13,22 @@ It creates the following file structure. Repository created by this program can 
 
 ```
 └───output
-    ├───Kata name #1
-    │       README.md
-    │       Solution.py
+    ├───5 kyu
+    │   └───Kata name #1
+    │           README.md
+    │           Solution 1.java
+    │           Solution 2.java
     │
-    └───Kata name #2
-            README.md
-            Solution 1.java
-            Solution 2.java
+    ├───6 kyu
+    │   ├───Kata name #1
+    │   │       README.md
+    │   │       Solution.py
+    │   │
+    │   └───Kata name #2
+    │           README.md
+    │           Solution.kt
+    │
+    └───...
 ```
 
 `README.md` files contain Kata title and link.

@@ -181,6 +181,7 @@ def main(cmd_args) -> None:
         for kata in katas:
             url = kata.find("div", class_="item-title").a.get("href")
             title = kata.find("div", class_="item-title").a.string.strip()
+            difficulty = kata.find("span").string
             code_list = kata.find_all("code")
             timestamps = kata.find_all("time-ago")
 
@@ -203,8 +204,8 @@ def main(cmd_args) -> None:
 
             clean_title = re.sub(r"\s+", " ", clean_title)
 
-            kata_path = Path(OUTPUT_DIRECTORY, clean_title)
-            Path(kata_path).mkdir()
+            kata_path = Path(OUTPUT_DIRECTORY, difficulty, clean_title)
+            Path(kata_path).mkdir(parents=True)
 
             readme_path = Path(kata_path, README_FILE)
 
@@ -233,7 +234,7 @@ def main(cmd_args) -> None:
                 with open(Path(kata_path, filename), "w", encoding="utf-8") as file:
                     file.write(solution.code)
 
-                git.run_command("add", Path(clean_title, filename))
+                git.run_command("add", Path(difficulty, clean_title, filename))
 
                 git.run_command(
                     "commit",
